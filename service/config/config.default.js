@@ -41,6 +41,15 @@ module.exports = appInfo => {
     // load into agent, default is close
     agent: false,
   };
+  config.security = {
+    csrf: { enable: false },
+    domainWhiteList: ['http://localhost:3000'],
+  };
+  config.cors = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    allowMethods: 'GET,PUT,POST,DELETE',
+  };
 
   return {
     ...config,

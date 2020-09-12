@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import '../styles/Pages/detailed.less';
 
 import { Row, Col, Breadcrumb, Affix } from 'antd';
-import { CalendarOutlined, FolderOutlined, FireOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import marked from 'marked';
 import hljs from 'highlight.js';
@@ -36,7 +36,6 @@ function Detailed({ post }) {
     const anchor = MdAnchor.add(text, level);
     return `<a id="${anchor}" href="#${anchor}" class="anchor-fix"><h${level}>${text}</h${level}></a>\n`;
   };
-
   const article = marked(post.article_content);
 
   return (
@@ -65,14 +64,14 @@ function Detailed({ post }) {
 
               <div className='list-icon center'>
                 <span>
-                  <CalendarOutlined />
+                  <FontAwesomeIcon icon='calendar-day' />
                   {post.addTime}
                 </span>
                 <span>
-                  <FolderOutlined /> {post.typeName}
+                  <FontAwesomeIcon icon='folder' /> {post.typeName}
                 </span>
                 <span>
-                  <FireOutlined />
+                  <FontAwesomeIcon icon='fire' />
                   {post.view_count}
                 </span>
               </div>
@@ -98,17 +97,28 @@ function Detailed({ post }) {
   );
 }
 
+import { API } from '../config/default.json';
 //  Next.js will pre-render this page on each request using the data returned by getServerSideProps.
 export async function getServerSideProps({ query }) {
-  let id = query.id;
-  const res = await axios.get('http://127.0.0.1:7001/client/getArticleList/' + id);
-  const posts = await res.data;
-  const post = posts.data[0];
-  return {
-    props: {
-      post,
-    },
-  };
+  try {
+    const id = query.id;
+    const base = API.base;
+    const requestUrl = base + API.servicePath.getArticleById;
+    const res = await axios.get(requestUrl + id);
+    const posts = await res.data;
+    const post = posts.data[0];
+    return {
+      props: {
+        post,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        msg: 'server error',
+      },
+    };
+  }
 }
 
 export default Detailed;

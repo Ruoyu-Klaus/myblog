@@ -7,7 +7,7 @@ import Project from '../components/Project';
 import Footer from '../components/Footer';
 
 import { Row, Col, List } from 'antd';
-import { CalendarOutlined, FolderOutlined, FireOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../styles/Pages/index.less';
 
 import axios from 'axios';
@@ -37,14 +37,14 @@ function Home({ posts }) {
                   </div>
                   <div className='list-icon'>
                     <span>
-                      <CalendarOutlined />
+                      <FontAwesomeIcon icon='calendar-day' />
                       {item.addTime}
                     </span>
                     <span>
-                      <FolderOutlined /> {item.typeName}
+                      <FontAwesomeIcon icon='folder' /> {item.typeName}
                     </span>
                     <span>
-                      <FireOutlined />
+                      <FontAwesomeIcon icon='fire' />
                       {item.view_count}
                     </span>
                   </div>
@@ -64,10 +64,13 @@ function Home({ posts }) {
   );
 }
 
+import { API } from '../config/default.json';
 // This function gets called at build time
 export async function getStaticProps() {
   // Call an external API endpoint to get posts
-  const res = await axios.get('http://127.0.0.1:7001/client/getArticleList');
+  const base = API.base;
+  const requestUrl = base + API.servicePath.getArticleList;
+  const res = await axios.get(requestUrl);
   const posts = await res.data;
   // By returning { props: posts }, the Blog component
   // will receive `posts` as a prop at build time

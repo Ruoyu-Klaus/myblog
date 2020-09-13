@@ -8,10 +8,29 @@ import Footer from '../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Row, Col, List, Breadcrumb } from 'antd';
 
+import '../styles/Pages/list.less';
+import marked from 'marked';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/monokai-sublime.css';
+
 import Link from 'next/link';
 import axios from 'axios';
 
 function Mylist({ list }) {
+  const renderer = new marked.Renderer();
+  marked.setOptions({
+    renderer: renderer,
+    gfm: true,
+    pedantic: false,
+    sanitize: false,
+    tables: true,
+    breaks: false,
+    smartLists: true,
+    smartypants: false,
+    highlight: function (code) {
+      return hljs.highlightAuto(code).value;
+    },
+  });
   const [mylist, setMylist] = useState(list.data);
   useEffect(() => {
     setMylist(list.data);
@@ -30,7 +49,7 @@ function Mylist({ list }) {
               <Breadcrumb.Item>
                 <a href='/'>首页</a>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>视频列表</Breadcrumb.Item>
+              <Breadcrumb.Item>博客</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <div>
@@ -58,7 +77,10 @@ function Mylist({ list }) {
                       {item.view_count}
                     </span>
                   </div>
-                  <div className='list-context'>{item.context}</div>
+                  <div
+                    className='list-context'
+                    dangerouslySetInnerHTML={{ __html: marked(item.introduce) }}
+                  ></div>
                 </List.Item>
               )}
             />

@@ -10,9 +10,28 @@ import { Row, Col, List } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../styles/Pages/index.less';
 
+import marked from 'marked';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/monokai-sublime.css';
+
 import axios from 'axios';
 
 function Home({ posts }) {
+  const renderer = new marked.Renderer();
+  marked.setOptions({
+    renderer: renderer,
+    gfm: true,
+    pedantic: false,
+    sanitize: false,
+    tables: true,
+    breaks: false,
+    smartLists: true,
+    smartypants: false,
+    highlight: function (code) {
+      return hljs.highlightAuto(code).value;
+    },
+  });
+
   const [mylist, setMylist] = useState(posts.data);
   return (
     <div>
@@ -48,7 +67,10 @@ function Home({ posts }) {
                       {item.view_count}
                     </span>
                   </div>
-                  <div className='list-context'>{item.context}</div>
+                  <div
+                    className='list-context'
+                    dangerouslySetInnerHTML={{ __html: marked(item.introduce) }}
+                  ></div>
                 </List.Item>
               )}
             />

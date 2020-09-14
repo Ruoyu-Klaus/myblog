@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    maxHeight: 745,
+    maxHeight: '100%',
     '& .MuiInputBase-root': {
       fontSize: 16,
     },
   },
 }));
 
-function TextArea() {
+function TextArea({ rows }) {
   const classes = useStyles();
   const [value, setValue] = useState('');
 
@@ -28,11 +29,14 @@ function TextArea() {
         multiline
         value={value}
         onChange={handleChange}
-        rows={35}
+        rows={rows}
         variant='outlined'
       />
     </div>
   );
 }
+TextArea.propTypes = {
+  rows: PropTypes.number.isRequired,
+};
 
 export default TextArea;

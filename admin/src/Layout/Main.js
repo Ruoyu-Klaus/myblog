@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route } from 'react-router-dom';
 import Copyright from '../Components/Common/Copyright';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Breadcrumbs, Link, Container, Box } from '@material-ui/core';
@@ -40,6 +41,7 @@ function Main() {
       square
       style={{
         minHeight: '100vh',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -60,8 +62,9 @@ function Main() {
           <Typography color='textPrimary'>Breadcrumb</Typography>
         </Breadcrumbs>
         <div className={classes.content}>
-          <AddArticle />
-          <Typography paragraph>
+          <Route exact path='/' component={AddArticle} />
+
+          {/* <Typography paragraph>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent
             elementum facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in
@@ -73,8 +76,8 @@ function Main() {
             at augue. At augue eget arcu dictum varius duis at consectetur lorem. Velit sed
             ullamcorper morbi tincidunt. Lorem donec massa sapien faucibus et molestie ac.
           </Typography>
-          <Typography paragraph>
-            Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
+          <Typography paragraph> */}
+          {/* Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
             facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
             tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
             consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus
@@ -84,7 +87,7 @@ function Main() {
             sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo
             viverra maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam
             ultrices sagittis orci a.
-          </Typography>
+          </Typography> */}
         </div>
       </main>
       <Container component='footer' style={{ marginTop: 'auto' }}>

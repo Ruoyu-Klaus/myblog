@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Copyright from './Common/Copyright';
+import Alert from './Common/Alerts';
 import {
   Avatar,
   Button,
@@ -13,6 +15,8 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
+import { API } from '../config/default.json';
+import Axios from '../utils/axios';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -36,14 +40,54 @@ const useStyles = makeStyles(theme => ({
 
 function LoginForm() {
   const classes = useStyles();
+  const history = useHistory();
   const [uname, setUname] = useState('');
   const [upassword, setUpassword] = useState('');
+  const [openAlert, setOpenAlert] = useState({ open: false, message: '' });
+
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(uname, upassword);
+    if (!uname) {
+      setOpenAlert(state => ({ ...state, open: true, message: '请输入用户名' }));
+      return false;
+    } else if (!upassword) {
+      setOpenAlert(state => ({ ...state, open: true, message: '请输入密码' }));
+      return false;
+    }
+    let dataProps = {
+      userName: uname,
+      password: upassword,
+    };
+    let reqUrl = API.servicePath.getCheckLogin;
+    const fetchUser = async function () {
+      let res = await Axios({
+        method: 'post',
+        url: reqUrl,
+        data: dataProps,
+        withCredentials: true,
+      });
+      if (res.data.data === '登录成功') {
+        localStorage.setItem('openId', res.data.openId);
+        history.push('/index');
+      } else {
+        setOpenAlert(state => ({ ...state, open: true, message: '用户名密码错误' }));
+      }
+    };
+    fetchUser();
   };
+  const handleClose = () => {
+    setOpenAlert(state => ({ ...state, open: false }));
+  };
+
   return (
     <div className={classes.paper}>
+      <Alert
+        message={openAlert.message}
+        type='error'
+        open={openAlert.open}
+        handleClose={handleClose}
+      />
+
       <Avatar className={classes.avatar}>
         <LockOutlinedIcon />
       </Avatar>

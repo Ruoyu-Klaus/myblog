@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -13,13 +13,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TextArea({ rows }) {
+function TextArea({ rows, handleChange, value }) {
   const classes = useStyles();
-  const [value, setValue] = useState('');
 
-  const handleChange = event => {
-    setValue(event.target.value);
-  };
   return (
     <div className='markdown-content'>
       <TextField
@@ -37,6 +33,8 @@ function TextArea({ rows }) {
 }
 TextArea.propTypes = {
   rows: PropTypes.number.isRequired,
+  value: PropTypes.string,
+  handleChange: PropTypes.func.isRequired,
 };
 
 export default TextArea;

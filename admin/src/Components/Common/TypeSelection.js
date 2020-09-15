@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { FormControl, Select, MenuItem } from '@material-ui/core';
+
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -9,14 +11,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TypeSelection() {
+function TypeSelection({ option, handleChange, types, placehoder }) {
   const classes = useStyles();
-  const [type, setType] = useState('1');
-  const [open, setOpen] = useState(false);
 
-  const handleChange = event => {
-    setType(event.target.value);
-  };
+  const [open, setOpen] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -28,19 +26,32 @@ function TypeSelection() {
   return (
     <FormControl className={classes.formControl}>
       <Select
-        labelId='demo-controlled-open-select-label'
-        id='demo-controlled-open-select'
+        labelId='controlled-open-select-label'
+        id='controlled-open-select'
         open={open}
+        displayEmpty
         onClose={handleClose}
         onOpen={handleOpen}
-        value={type}
+        value={option}
         onChange={handleChange}
       >
-        <MenuItem value='1'>博客</MenuItem>
-        <MenuItem value='2'>生活</MenuItem>
+        <MenuItem value='' disabled>
+          {placehoder}
+        </MenuItem>
+        {types.length > 0 &&
+          types.map(type => (
+            <MenuItem key={type.id} value={type.id}>
+              {type.typeName}
+            </MenuItem>
+          ))}
       </Select>
     </FormControl>
   );
 }
+
+TypeSelection.prototype = {
+  types: PropTypes.array.isRequired,
+  placehoder: PropTypes.string,
+};
 
 export default TypeSelection;

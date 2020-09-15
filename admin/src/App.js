@@ -6,8 +6,8 @@ import Home from './Pages/Home';
 function App() {
   return (
     <Router>
-      <Route exact path='/' component={Home} />
-      <Route exact path='/signin/' component={Signin} />
+      <Route exact path='/' component={Signin} />
+      <Route path='/index' component={Home} />
     </Router>
   );
 }

@@ -66,7 +66,7 @@ function LoginForm() {
         data: dataProps,
         withCredentials: true,
       });
-      if (res.data.data === '登录成功') {
+      if (res.data === '登录成功') {
         localStorage.setItem('openId', res.data.openId);
         history.push('/index');
       } else {

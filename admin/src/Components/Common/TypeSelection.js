@@ -38,7 +38,7 @@ function TypeSelection({ option, handleChange, types, placehoder }) {
         <MenuItem value='' disabled>
           {placehoder}
         </MenuItem>
-        {types.length > 0 &&
+        {types &&
           types.map(type => (
             <MenuItem key={type.id} value={type.id}>
               {type.typeName}

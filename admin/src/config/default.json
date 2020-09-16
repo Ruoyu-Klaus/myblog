@@ -3,7 +3,9 @@
     "base": "http://127.0.0.1:7001",
     "servicePath": {
       "getCheckLogin": "/admin/checkLogin/",
-      "getTypeInfo": "/admin/getTypeInfo/"
+      "getTypeInfo": "/admin/getTypeInfo/",
+      "addArticle": "/admin/addArticle/",
+      "updateArticle": "/admin/updateArticle/"
     }
   }
 }

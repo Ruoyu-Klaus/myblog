@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Breadcrumbs, Link, Container, Box } from '@material-ui/core';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import AddArticle from '../Components/AddArticle';
+import ArticleList from '../Components/ArticleList';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,21 +63,8 @@ function Main() {
           <Typography color='textPrimary'>Breadcrumb</Typography>
         </Breadcrumbs>
         <div className={classes.content}>
-          <Route exact path='/index' component={AddArticle} />
-
-          {/* <Typography paragraph>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent
-            elementum facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in
-            hendrerit gravida rutrum quisque non tellus. Convallis convallis tellus id interdum
-            velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing.
-            Amet nisl suscipit adipiscing bibendum est ultricies integer quis. Cursus euismod quis
-            viverra nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum leo.
-            Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus
-            at augue. At augue eget arcu dictum varius duis at consectetur lorem. Velit sed
-            ullamcorper morbi tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-          </Typography>
-          <Typography paragraph> */}
+          <Route exact path='/index/addarticle' component={AddArticle} />
+          <Route exact path='/index/articlelist' component={ArticleList} />
         </div>
       </main>
       <Container component='footer' style={{ marginTop: 'auto' }}>

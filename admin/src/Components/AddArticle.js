@@ -10,11 +10,11 @@ import HtmlMarkdown from './Common/HtmlMarkdown';
 import Alert from './Common/Alerts';
 
 import { API } from '../config/default.json';
-// import axios from 'axios';
+import * as dayjs from 'dayjs';
 import Axios from '../utils/axios';
 
 function AddArticle({ history }) {
-  const [articleId, setArticleId] = useState(0); // 文章的ID，如果是0说明是新增加，如果不是0，说明是修改
+  const [articleId, setArticleId] = useState(0); // 文章ID 0新增加，不是0修改
   const [typeInfo, setTypeInfo] = useState([]); // 文章类别信息
   const [articleTitle, setArticleTitle] = useState('');
   const [articleContent, setArticleContent] = useState(''); //markdown的编辑内容
@@ -22,7 +22,7 @@ function AddArticle({ history }) {
 
   const [updateDate, setUpdateDate] = useState(); //修改日志的日期
 
-  const [openAlert, setOpenAlert] = useState({ open: false, message: '' });
+  const [openAlert, setOpenAlert] = useState({ open: false, message: '', type: 'error' });
 
   useEffect(() => {
     getTypeInfo();
@@ -40,12 +40,12 @@ function AddArticle({ history }) {
   const getTypeInfo = async () => {
     let reqUrl = API.servicePath.getTypeInfo;
     let res = await Axios.get(reqUrl);
-    if (res.data.data === '没有登录') {
+    if (res.data === '没有登录') {
       localStorage.removeItem('openId');
       console.log(res);
       history.push('/signin');
     } else {
-      setTypeInfo(res.data.data);
+      setTypeInfo(res.data);
     }
   };
 
@@ -60,9 +60,6 @@ function AddArticle({ history }) {
   const handleDateChange = date => {
     setSelectedDate(date);
   };
-
-  // console.log(selectedDate);
-  // console.log(dayjs(selectedDate).format(`YYYY-MM-DD`));
 
   const saveArticle = () => {
     if (!selectedType) {
@@ -81,9 +78,54 @@ function AddArticle({ history }) {
       setOpenAlert(state => ({ ...state, open: true, message: '发布日期不能为空' }));
       return false;
     }
-    setOpenAlert(state => ({ ...state, open: true, message: '检验通过' }));
-  };
+    let dataProps = new Object();
+    dataProps.type_id = selectedType;
+    dataProps.title = articleTitle;
+    dataProps.article_content = articleContent;
+    dataProps.introduce = introContent;
+    dataProps.addTime = dayjs(selectedDate).unix();
 
+    setOpenAlert(state => ({ ...state, open: true, message: '检验通过' }));
+    if (articleId === 0) {
+      dataProps.view_count = 0;
+      const uploadArticle = async function () {
+        let reqUrl = API.servicePath.addArticle;
+        let res = await Axios({
+          method: 'post',
+          url: reqUrl,
+          data: dataProps,
+          withCredentials: true,
+        });
+        setOpenAlert(state => ({
+          ...state,
+          open: true,
+          type: res.isSuccess ? 'success' : 'error',
+          message: res.isSuccess ? '上传成功' : '上传失败',
+        }));
+        res.isSuccess && setArticleId(res.insertId);
+      };
+      uploadArticle();
+    } else {
+      dataProps.id = articleId;
+      const updateArticle = async function () {
+        let reqUrl = API.servicePath.updateArticle;
+        let res = await Axios({
+          method: 'post',
+          url: reqUrl,
+          data: dataProps,
+          withCredentials: true,
+        });
+        setOpenAlert(state => ({
+          ...state,
+          open: true,
+          type: res.isSuccess ? 'success' : 'error',
+          message: res.isSuccess ? '更新成功' : '更新失败',
+        }));
+        res.isSuccess && setArticleId(res.insertId);
+      };
+      updateArticle();
+    }
+  };
   const handleClose = () => {
     setOpenAlert(state => ({ ...state, open: false }));
   };
@@ -92,7 +134,7 @@ function AddArticle({ history }) {
     <Grid container spacing={2}>
       <Alert
         message={openAlert.message}
-        type='error'
+        type={openAlert.type}
         open={openAlert.open}
         handleClose={handleClose}
       />

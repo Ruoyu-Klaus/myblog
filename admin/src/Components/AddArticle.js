@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import '../static/css/AddArticle.css';
 
 import { Grid, TextField, Button } from '@material-ui/core';
@@ -7,31 +6,37 @@ import TypeSelection from './Common/TypeSelection';
 import DatePicker from './Common/DatePicker';
 import TextArea from './Common/TextArea';
 import HtmlMarkdown from './Common/HtmlMarkdown';
-import Alert from './Common/Alerts';
+import Alerts from './Common/Alerts';
 
 import { API } from '../config/default.json';
 import * as dayjs from 'dayjs';
 import Axios from '../utils/axios';
 
-function AddArticle({ history }) {
-  const [articleId, setArticleId] = useState(0); // 文章ID 0新增加，不是0修改
-  const [typeInfo, setTypeInfo] = useState([]); // 文章类别信息
-  const [articleTitle, setArticleTitle] = useState('');
-  const [articleContent, setArticleContent] = useState(''); //markdown的编辑内容
-  const [introContent, setIntroContent] = useState(); //简介的markdown内容
-
-  const [updateDate, setUpdateDate] = useState(); //修改日志的日期
-
+function AddArticle({ history, match }) {
+  // 文章ID 0新增加，不是0修改
+  const [articleId, setArticleId] = useState(0);
+  // 文章类别信息
+  const [typeInfo, setTypeInfo] = useState([]);
+  // Alert
   const [openAlert, setOpenAlert] = useState({ open: false, message: '', type: 'error' });
-
   useEffect(() => {
     getTypeInfo();
+
+    // 获取文章ID
+    let id = match.params.id;
+    id && setArticleId(id) && getArticleById(id);
   }, []);
 
+  const [articleTitle, setArticleTitle] = useState('');
+
+  //编辑内容
+  const [articleContent, setArticleContent] = useState('');
   const handleArticleChange = event => {
     setArticleContent(event.target.value);
   };
 
+  //简介内容
+  const [introContent, setIntroContent] = useState('');
   const handleIntroChange = event => {
     setIntroContent(event.target.value);
   };
@@ -42,8 +47,7 @@ function AddArticle({ history }) {
     let res = await Axios.get(reqUrl);
     if (res.data === '没有登录') {
       localStorage.removeItem('openId');
-      console.log(res);
-      history.push('/signin');
+      history.push('/');
     } else {
       setTypeInfo(res.data);
     }
@@ -59,6 +63,24 @@ function AddArticle({ history }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = date => {
     setSelectedDate(date);
+  };
+
+  // 暂存文章
+  const cacheArticle = () => {
+    let dataProps = new Object();
+    dataProps.type_id = selectedType;
+    dataProps.title = articleTitle;
+    dataProps.article_content = articleContent;
+    dataProps.introduce = introContent;
+    dataProps.addTime = dayjs(selectedDate).unix();
+  };
+  // 清空文章
+  const clearArticle = () => {
+    setArticleId(() => 0);
+    setArticleTitle(() => '');
+    setSelectedType(() => '');
+    setArticleContent(() => '');
+    setIntroContent(() => '');
   };
 
   const saveArticle = () => {
@@ -87,56 +109,91 @@ function AddArticle({ history }) {
 
     setOpenAlert(state => ({ ...state, open: true, message: '检验通过' }));
     if (articleId === 0) {
+      // Logic for Add Article
       dataProps.view_count = 0;
       const uploadArticle = async function () {
-        let reqUrl = API.servicePath.addArticle;
-        let res = await Axios({
-          method: 'post',
-          url: reqUrl,
-          data: dataProps,
-          withCredentials: true,
-        });
-        setOpenAlert(state => ({
-          ...state,
-          open: true,
-          type: res.isSuccess ? 'success' : 'error',
-          message: res.isSuccess ? '上传成功' : '上传失败',
-        }));
-        res.isSuccess && setArticleId(res.insertId);
+        try {
+          let reqUrl = API.servicePath.addArticle;
+          let res = await Axios({
+            method: 'post',
+            url: reqUrl,
+            data: dataProps,
+            withCredentials: true,
+          });
+          setOpenAlert(state => ({
+            ...state,
+            open: true,
+            type: res.isSuccess ? 'success' : 'error',
+            message: res.isSuccess ? '上传成功' : '上传失败',
+          }));
+          res.isSuccess && setArticleId(() => res.insertId);
+        } catch (error) {
+          setOpenAlert(state => ({
+            ...state,
+            open: true,
+            type: 'error',
+            message: '更新失败',
+          }));
+        }
       };
       uploadArticle();
     } else {
+      // Logic for Edit Article
       dataProps.id = articleId;
       const updateArticle = async function () {
-        let reqUrl = API.servicePath.updateArticle;
-        let res = await Axios({
-          method: 'post',
-          url: reqUrl,
-          data: dataProps,
-          withCredentials: true,
-        });
-        setOpenAlert(state => ({
-          ...state,
-          open: true,
-          type: res.isSuccess ? 'success' : 'error',
-          message: res.isSuccess ? '更新成功' : '更新失败',
-        }));
-        res.isSuccess && setArticleId(res.insertId);
+        try {
+          let reqUrl = API.servicePath.updateArticle;
+          let res = await Axios({
+            method: 'post',
+            url: reqUrl,
+            data: dataProps,
+            withCredentials: true,
+          });
+          setOpenAlert(state => ({
+            ...state,
+            open: true,
+            type: res.isSuccess ? 'success' : 'error',
+            message: res.isSuccess ? '更新成功' : '更新失败',
+          }));
+          res.isSuccess && setArticleId(res.insertId);
+        } catch (error) {
+          setOpenAlert(state => ({
+            ...state,
+            open: true,
+            type: 'error',
+            message: '更新失败',
+          }));
+        }
       };
       updateArticle();
     }
   };
-  const handleClose = () => {
+  const handleAlertClose = () => {
     setOpenAlert(state => ({ ...state, open: false }));
+  };
+
+  const getArticleById = async id => {
+    let reqUrl = API.servicePath.getArticleById + id;
+    let res = await Axios({
+      method: 'get',
+      url: reqUrl,
+      withCredentials: true,
+    });
+    let articleInfo = res.data[0];
+    setArticleTitle(() => articleInfo.title);
+    setIntroContent(() => articleInfo.introduce);
+    setArticleContent(() => articleInfo.article_content);
+    setSelectedType(() => articleInfo.type_id);
+    setSelectedDate(() => articleInfo.addTime);
   };
 
   return (
     <Grid container spacing={2}>
-      <Alert
+      <Alerts
         message={openAlert.message}
         type={openAlert.type}
         open={openAlert.open}
-        handleClose={handleClose}
+        handleClose={handleAlertClose}
       />
       <Grid item xs={8} md={9}>
         <Grid container direction='column' spacing={2}>
@@ -173,12 +230,19 @@ function AddArticle({ history }) {
 
       <Grid item xs={4} md={3}>
         <Grid container direction='column' spacing={2}>
-          <Grid item container xs={12} style={{ minHeight: 90 }} alignItems='flex-end'>
-            <Grid item xs={10}>
-              <Button variant='contained' color='secondary' onClick={saveArticle}>
+          <Grid item container xs={12} style={{ minHeight: 90 }} spacing={2} alignItems='flex-end'>
+            <Grid item xs={4}>
+              <Button variant='outlined' onClick={clearArticle}>
+                清空文章
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button variant='outlined' color='primary' onClick={cacheArticle}>
                 暂存文章
-              </Button>{' '}
-              <Button variant='contained' color='primary'>
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button variant='contained' color='secondary' onClick={saveArticle}>
                 发布文章
               </Button>
             </Grid>

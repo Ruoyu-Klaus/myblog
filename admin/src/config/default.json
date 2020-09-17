@@ -5,7 +5,10 @@
       "getCheckLogin": "/admin/checkLogin/",
       "getTypeInfo": "/admin/getTypeInfo/",
       "addArticle": "/admin/addArticle/",
-      "updateArticle": "/admin/updateArticle/"
+      "updateArticle": "/admin/updateArticle/",
+      "getArticleList": "/admin/getArticleList/",
+      "deleteArticleById": "/admin/deleteArticleById/",
+      "getArticleById": "/admin/getArticleById/"
     }
   }
 }

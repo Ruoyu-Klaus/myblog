@@ -19,6 +19,7 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CommentIcon from '@material-ui/icons/Comment';
 
+import { useHistory } from 'react-router-dom';
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -58,6 +59,16 @@ const useStyles = makeStyles(theme => ({
 function LeftDrawer({ open, handleDrawerClose }) {
   const classes = useStyles();
   const theme = useTheme();
+  const history = useHistory();
+  const handleClick = e => {
+    e.preventDefault();
+    const pathTo = e.currentTarget.dataset.value || '/';
+    if (pathTo === 'addArticle') {
+      history.push('/index/addarticle');
+    } else if (pathTo === 'articleList') {
+      history.push('/index/list');
+    }
+  };
 
   return (
     <Drawer
@@ -80,13 +91,13 @@ function LeftDrawer({ open, handleDrawerClose }) {
       </div>
       <Divider />
       <List>
-        <ListItem button key='Dashbord'>
+        <ListItem button onClick={handleClick} data-value='Dashbord'>
           <ListItemIcon>
             <DonutSmallIcon />
           </ListItemIcon>
           <ListItemText primary='Dashbord' />
         </ListItem>
-        <ListItem button key='New Article'>
+        <ListItem button onClick={handleClick} data-value='addArticle'>
           <ListItemIcon>
             <NoteAddIcon />
           </ListItemIcon>
@@ -96,13 +107,13 @@ function LeftDrawer({ open, handleDrawerClose }) {
       <Divider />
       <List>
         <ListSubheader inset>Manage Article</ListSubheader>
-        <ListItem button>
+        <ListItem button onClick={handleClick} data-value='articleList'>
           <ListItemIcon>
             <AssignmentIcon />
           </ListItemIcon>
           <ListItemText primary='Artical List' />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={handleClick} data-value='comments'>
           <ListItemIcon>
             <CommentIcon />
           </ListItemIcon>

@@ -64,7 +64,8 @@ function Main() {
         </Breadcrumbs>
         <div className={classes.content}>
           <Route exact path='/index/addarticle' component={AddArticle} />
-          <Route exact path='/index/articlelist' component={ArticleList} />
+          <Route exact path='/index/addarticle/:id' component={AddArticle} />
+          <Route exact path='/index/list' component={ArticleList} />
         </div>
       </main>
       <Container component='footer' style={{ marginTop: 'auto' }}>

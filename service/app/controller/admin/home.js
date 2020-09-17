@@ -57,6 +57,53 @@ class HomeController extends Controller {
       isSuccess,
     };
   }
+  //后台获取文章 GET
+  async getArticleList() {
+    const { ctx } = this;
+    let sql =
+      'SELECT article.id as id,' +
+      'article.title as title,' +
+      'article.introduce as introduce,' +
+      "FROM_UNIXTIME(article.addTime,'%Y-%m-%d %H:%i:%s' ) as addTime," +
+      'article.view_count as view_count ,' +
+      'type.typeName as typeName ' +
+      'FROM article LEFT JOIN type ON article.type_id = type.Id ORDER BY article.id DESC';
+
+    const results = await this.app.mysql.query(sql);
+    ctx.body = {
+      data: results,
+    };
+  }
+
+  //后台通过ID删除文章 DELETE
+  async deleteArticleById() {
+    const { ctx } = this;
+    let id = ctx.params.id;
+    const res = await this.app.mysql.delete('article', { id });
+    ctx.body = {
+      data: res,
+    };
+  }
+
+  //后台通过ID得到文章 GET
+  async getArticleById() {
+    const { ctx } = this;
+    let id = ctx.params.id;
+    let sql =
+      'SELECT article.id as id,' +
+      'article.title as title,' +
+      'article.introduce as introduce,' +
+      'article.article_content as article_content,' +
+      "FROM_UNIXTIME(article.addTime,'%Y-%m-%d' ) as addTime," +
+      'article.view_count as view_count ,' +
+      'type.typeName as typeName ,' +
+      'type.id as typeId ' +
+      'FROM article LEFT JOIN type ON article.type_id = type.Id ' +
+      'WHERE article.id=' +
+      id;
+    const result = await this.app.mysql.query(sql);
+    ctx.body = { data: result };
+  }
 }
 
 module.exports = HomeController;

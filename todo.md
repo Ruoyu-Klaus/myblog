@@ -1,9 +1,12 @@
-# State management
+# Features
 
-- 使用 Redux 模块化数据请求，提升 state，增强复用组件
-- 部分组件需要定义 props 种类
+- 首页数据可视化图片
+- Breadcrumbs 导航实现
 - 暂存文章
+- 评论管理
 
-# Mysql
+# Refactor
 
-- 替换 sql 语法，使用 ORM 操作
+- 增强组件复用，优化冗余代码
+- 无状态组件需要定义 props 类
+- 替换 sql 语法，使用 ORM 操作如 sequelize

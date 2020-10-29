@@ -230,7 +230,7 @@ function AddArticle({ history, match }) {
 
       <Grid item xs={4} md={3}>
         <Grid container direction='column' spacing={2}>
-          <Grid item container xs={12} style={{ minHeight: 90 }} spacing={2} alignItems='flex-end'>
+          <Grid item container xs={12} style={{ minHeight: 90 }} alignItems='flex-end'>
             <Grid item xs={4}>
               <Button variant='outlined' onClick={clearArticle}>
                 清空文章

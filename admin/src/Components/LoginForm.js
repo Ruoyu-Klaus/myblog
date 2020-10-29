@@ -66,6 +66,7 @@ function LoginForm() {
         data: dataProps,
         withCredentials: true,
       });
+      console.log(res);
       if (res.data === '登录成功') {
         localStorage.setItem('openId', res.data.openId);
         history.push('/index');

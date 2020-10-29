@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    maxHeight: '100%',
+    minHeight: '100%',
     '& .MuiInputBase-root': {
       fontSize: 16,
     },

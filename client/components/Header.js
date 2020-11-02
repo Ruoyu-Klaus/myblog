@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Router from 'next/router';
-import Link from 'next/link';
+
 import axios from 'axios';
 import { API } from '../config/default.json';
 
 import '../styles/Components/Header.less';
-import { Row, Col, Menu } from 'antd';
+import { Row, Col, Menu, Avatar } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Header() {
@@ -23,9 +23,9 @@ function Header() {
 
   const handleClick = e => {
     if (e.key == 0) {
-      Router.push('/');
+      Router.push('/home');
     } else {
-      Router.push('/list?id=' + e.key);
+      Router.push(`/list?id=${e.key}`);
     }
   };
 
@@ -33,7 +33,7 @@ function Header() {
     <div className='header'>
       <Row type='flex' justify='center'>
         <Col xs={24} sm={24} md={14} lg={12}>
-          <span className='header-logo'>伯格</span>
+          <Avatar className='header-logo' src='/logo192.png' shape='square' size='large'></Avatar>
           <span className='header-text'>克劳斯</span>
         </Col>
         <Col xs={0} sm={0} md={10} lg={8} xl={6}>
@@ -45,7 +45,7 @@ function Header() {
             {navArray.map(nav => (
               <Menu.Item key={nav.id}>
                 <FontAwesomeIcon icon={nav.icon} />
-                {nav.typeName}
+                {nav.type_name}
               </Menu.Item>
             ))}
           </Menu>

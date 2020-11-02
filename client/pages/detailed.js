@@ -38,6 +38,8 @@ function Detailed({ post }) {
   };
   const article = marked(post.article_content);
 
+  console.log(post);
+
   return (
     <>
       <Head>
@@ -50,12 +52,12 @@ function Detailed({ post }) {
             <div className='bread-div'>
               <Breadcrumb>
                 <Breadcrumb.Item>
-                  <a href='/'>首页</a>
+                  <a href='/home'>首页</a>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                  <a href='/'>视频列表</a>
+                  <a href={`/list?id=${post.type_id}`}>{post.type_name}</a>
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>xxxx</Breadcrumb.Item>
+                <Breadcrumb.Item>{post.title}</Breadcrumb.Item>
               </Breadcrumb>
             </div>
 
@@ -65,10 +67,10 @@ function Detailed({ post }) {
               <div className='list-icon center'>
                 <span>
                   <FontAwesomeIcon icon='calendar-day' />
-                  {post.addTime}
+                  {post.add_time}
                 </span>
                 <span>
-                  <FontAwesomeIcon icon='folder' /> {post.typeName}
+                  <FontAwesomeIcon icon='folder' /> {post.type_name}
                 </span>
                 <span>
                   <FontAwesomeIcon icon='fire' />

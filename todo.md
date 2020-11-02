@@ -4,6 +4,7 @@
 - Breadcrumbs 导航实现
 - 暂存文章
 - 评论管理
+- 首页页码
 
 # Refactor
 

@@ -1,22 +1,22 @@
-import react, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import Header from '../components/Header';
 import Author from '../components/Author';
 import Project from '../components/Project';
 import Footer from '../components/Footer';
 
+import { Row, Col, List, Pagination } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Row, Col, List, Breadcrumb } from 'antd';
+import '../styles/Pages/index.less';
 
-import '../styles/Pages/list.less';
 import marked from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/monokai-sublime.css';
 
-import Link from 'next/link';
 import axios from 'axios';
 
-function Mylist({ list, typeName }) {
+function Home({ posts }) {
   const renderer = new marked.Renderer();
   marked.setOptions({
     renderer: renderer,
@@ -31,29 +31,27 @@ function Mylist({ list, typeName }) {
       return hljs.highlightAuto(code).value;
     },
   });
-  const [mylist, setMylist] = useState(list.data);
-  useEffect(() => {
-    setMylist(list.data);
-  }, [list]);
 
+  const [mylist, setMylist] = useState(posts.data);
+  const [currentPage, setPage] = useState(1);
+
+  useEffect(() => {
+    setMylist(posts.data);
+  }, [posts]);
+
+  const handlePageChange = page => {
+    setPage(page);
+  };
   return (
     <div>
       <Head>
-        <title>Blogs | Ruoyu </title>
+        <title>Home | Ruoyu</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header />
       <Row className='comm-main' type='flex' justify='center'>
         <Col className='comm-left' xs={24} sm={24} md={14} lg={12}>
-          <div className='bread-div'>
-            <Breadcrumb>
-              <Breadcrumb.Item>
-                <a href='/home'>首页</a>
-              </Breadcrumb.Item>
-              <Breadcrumb.Item>{type_name}</Breadcrumb.Item>
-            </Breadcrumb>
-          </div>
-          <div>
+          <>
             <List
               header={<div>最新日志</div>}
               itemLayout='vertical'
@@ -62,7 +60,7 @@ function Mylist({ list, typeName }) {
                 <List.Item>
                   <div className='list-title'>
                     <Link href={{ pathname: '/detailed', query: { id: item.id } }}>
-                      {item.title}
+                      <a>{item.title}</a>
                     </Link>
                   </div>
                   <div className='list-icon'>
@@ -85,7 +83,13 @@ function Mylist({ list, typeName }) {
                 </List.Item>
               )}
             />
-          </div>
+          </>
+          <Pagination
+            current={currentPage}
+            onChange={handlePageChange}
+            total={50}
+            style={{ textAlign: 'center' }}
+          />
         </Col>
         <Col className='comm-right' xs={0} sm={0} md={8} lg={6} xl={6}>
           <Author />
@@ -98,33 +102,19 @@ function Mylist({ list, typeName }) {
 }
 
 import { API } from '../config/default.json';
-
-//  Next.js will pre-render this page on each request using the data returned by getServerSideProps.
-export async function getServerSideProps({ query }) {
-  try {
-    const id = query.id;
-    const base = API.base;
-    const requestUrl = base + API.servicePath.getListById;
-    const res = await axios.get(requestUrl + id);
-    const list = await res.data;
-
-    const typeRequestUrl = base + API.servicePath.getTypeInfo;
-    const typeRes = await axios.get(typeRequestUrl);
-    const types = await typeRes.data.data;
-    const typeName = types.filter(type => type.id == id)[0].typeName;
-    return {
-      props: {
-        list,
-        typeName,
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        msg: 'server error',
-      },
-    };
-  }
+// This function gets called at build time
+export async function getStaticProps() {
+  // Call an external API endpoint to get posts
+  const base = API.base;
+  const requestUrl = base + API.servicePath.getArticleList;
+  const res = await axios.get(requestUrl);
+  const posts = await res.data;
+  // By returning { props: posts }, the Blog component
+  // will receive `posts` as a prop at build time
+  return {
+    props: {
+      posts,
+    },
+  };
 }
-
-export default Mylist;
+export default Home;

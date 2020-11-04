@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Author from '../components/Author';
 import { Row, Col } from 'antd';
+import axios from 'axios';
 
 function Cover() {
   return (

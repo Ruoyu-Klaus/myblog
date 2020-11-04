@@ -38,8 +38,6 @@ function Detailed({ post }) {
   };
   const article = marked(post.article_content);
 
-  console.log(post);
-
   return (
     <>
       <Head>
@@ -108,7 +106,7 @@ export async function getServerSideProps({ query }) {
     const requestUrl = base + API.servicePath.getArticleById;
     const res = await axios.get(requestUrl + id);
     const posts = await res.data;
-    const post = posts.data[0];
+    const post = posts.data;
     return {
       props: {
         post,

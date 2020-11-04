@@ -15,6 +15,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/monokai-sublime.css';
 
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 function Home({ posts }) {
   const renderer = new marked.Renderer();
@@ -66,7 +67,7 @@ function Home({ posts }) {
                   <div className='list-icon'>
                     <span>
                       <FontAwesomeIcon icon='calendar-day' />
-                      {item.add_time}
+                      {dayjs(item.add_time).format('YYYY-MM-DD')}
                     </span>
                     <span>
                       <FontAwesomeIcon icon='folder' /> {item.type_name}

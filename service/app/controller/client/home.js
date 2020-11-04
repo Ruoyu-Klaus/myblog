@@ -25,22 +25,24 @@ class HomeController extends Controller {
   }
   async getArticleById() {
     //先配置路由的动态传值，然后再接收值
-    let id = this.ctx.params.id;
-    let sql =
-      'SELECT article.id as id,' +
-      'article.title as title,' +
-      'article.introduce as introduce,' +
-      'article.article_content as article_content,' +
-      "FROM_UNIXTIME(article.addTime,'%Y-%m-%d %H:%i:%s' ) as addTime," +
-      'article.view_count as view_count ,' +
-      'type.typeName as typeName ,' +
-      'type.id as typeId ' +
-      'FROM article LEFT JOIN type ON article.type_id = type.Id ' +
-      'WHERE article.id=' +
-      id;
+    const { ctx } = this;
 
-    const result = await this.app.mysql.query(sql);
+    let id = ctx.params.id;
+    // let sql =
+    //   'SELECT article.id as id,' +
+    //   'article.title as title,' +
+    //   'article.introduce as introduce,' +
+    //   'article.article_content as article_content,' +
+    //   "FROM_UNIXTIME(article.addTime,'%Y-%m-%d %H:%i:%s' ) as addTime," +
+    //   'article.view_count as view_count ,' +
+    //   'type.typeName as typeName ,' +
+    //   'type.id as typeId ' +
+    //   'FROM article LEFT JOIN type ON article.type_id = type.Id ' +
+    //   'WHERE article.id=' +
+    //   id;
+    // const result = await this.app.mysql.query(sql);
 
+    const result = await ctx.model.ArticleList.findByPk(id);
     this.ctx.body = { data: result };
   }
   // 获取类别名称和编号
@@ -51,18 +53,23 @@ class HomeController extends Controller {
 
   // 获取类别内容
   async getListById() {
-    let id = this.ctx.params.id;
+    const { ctx } = this;
+    let id = ctx.params.id;
+
     let sql =
       'SELECT article.id as id,' +
       'article.title as title,' +
       'article.introduce as introduce,' +
-      "FROM_UNIXTIME(article.addTime,'%Y-%m-%d %H:%i:%s' ) as addTime," +
+      "FROM_UNIXTIME(article.add_time,'%Y-%m-%d %H:%i:%s' ) as add_time," +
       'article.view_count as view_count ,' +
-      'type.typeName as typeName ' +
+      'type.type_name as type_name ' +
       'FROM article LEFT JOIN type ON article.type_id = type.Id ' +
       'WHERE type_id=' +
       id;
     const result = await this.app.mysql.query(sql);
+
+    // const result = await ctx.model.ArticleList.findAll({ where: { type_id: id } });
+
     this.ctx.body = { data: result };
   }
 }

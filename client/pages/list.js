@@ -39,7 +39,7 @@ function Mylist({ list, typeName }) {
   return (
     <div>
       <Head>
-        <title>Blogs | Ruoyu </title>
+        <title>{mylist[0].type_name} | Ruoyu </title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header />
@@ -50,7 +50,7 @@ function Mylist({ list, typeName }) {
               <Breadcrumb.Item>
                 <a href='/home'>首页</a>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>{type_name}</Breadcrumb.Item>
+              <Breadcrumb.Item>{mylist[0].type_name}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <div>
@@ -111,7 +111,7 @@ export async function getServerSideProps({ query }) {
     const typeRequestUrl = base + API.servicePath.getTypeInfo;
     const typeRes = await axios.get(typeRequestUrl);
     const types = await typeRes.data.data;
-    const typeName = types.filter(type => type.id == id)[0].typeName;
+    const typeName = types.filter(type => type.id == id)[0].type_name;
     return {
       props: {
         list,

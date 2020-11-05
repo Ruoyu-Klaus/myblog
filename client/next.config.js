@@ -15,7 +15,22 @@ const themeVariables = lessToJS(
 if (typeof require !== 'undefined') {
   require.extensions['.less'] = file => {};
 }
+
 const nextConfig = {};
+
+// const withLessExcludeAntd = require('./next-less.config.js');
+
+// module.exports = withLessExcludeAntd({
+//   // cssModules: true,
+//   cssLoaderOptions: {
+//     importLoaders: 1,
+//     localIdentName: '[local]___[hash:base64:5]',
+//   },
+//   lessLoaderOptions: {
+//     javascriptEnabled: true,
+//     modifyVars: themeVariables,
+//   },
+// });
 
 const plugins = [
   withCSS(
@@ -26,10 +41,10 @@ const plugins = [
         modifyVars: themeVariables, // make your antd custom effective
         importLoaders: 0,
       },
-      cssLoaderOptions: {
-        importLoaders: 3,
-        localIdentName: '[local]___[hash:base64:5]',
-      },
+      // cssLoaderOptions: {
+      //   importLoaders: 3,
+      //   localIdentName: '[local]___[hash:base64:5]',
+      // },
       webpack: (config, { isServer }) => {
         if (isServer) {
           const antStyles = /antd\/.*?\/style.*?/;

@@ -60,6 +60,7 @@ function ArticleList() {
       url: reqUrl,
       withCredentials: true,
     });
+    console.log(res);
     setList(() => res.data);
   };
   const handleCloseConfrim = () => {
@@ -75,7 +76,7 @@ function ArticleList() {
   const handleDelete = async () => {
     try {
       let reqUrl = API.servicePath.deleteArticleById + selectId;
-      let res = await Axios({
+      await Axios({
         method: 'delete',
         url: reqUrl,
         withCredentials: true,
@@ -114,13 +115,13 @@ function ArticleList() {
           Container: props => <div {...props} />,
         }}
         icons={{
-          Search: props => <Search {...props} />,
-          ResetSearch: props => <Clear {...props} />,
-          SortArrow: props => <ArrowDownward {...props} />,
-          PreviousPage: props => <ChevronLeft {...props} />,
-          NextPage: props => <ChevronRight {...props} />,
-          FirstPage: props => <FirstPage {...props} />,
-          LastPage: props => <LastPage {...props} />,
+          Search: React.forwardRef((props, ref) => <Search ref={ref}></Search>),
+          ResetSearch: React.forwardRef((props, ref) => <Clear ref={ref}></Clear>),
+          SortArrow: React.forwardRef((props, ref) => <ArrowDownward ref={ref}></ArrowDownward>),
+          PreviousPage: React.forwardRef((props, ref) => <ChevronLeft ref={ref}></ChevronLeft>),
+          NextPage: React.forwardRef((props, ref) => <ChevronRight ref={ref}></ChevronRight>),
+          FirstPage: React.forwardRef((props, ref) => <FirstPage ref={ref}></FirstPage>),
+          LastPage: React.forwardRef((props, ref) => <LastPage ref={ref}></LastPage>),
         }}
         localization={{
           header: {
@@ -130,19 +131,33 @@ function ArticleList() {
         title='所有文章列表'
         columns={[
           { title: '标题', field: 'title' },
-          { title: '类别', field: 'typeName' },
-          { title: '修改时间', field: 'addTime' },
+          { title: '类别', field: 'type.type_name' },
+          {
+            title: '修改时间',
+            field: 'add_time',
+            render: rowData => (
+              <time> {dayjs(rowData.add_time).format('YYYY-MM-DD HH:mm:ss')}</time>
+            ),
+          },
           { title: '浏览量', field: 'view_count', type: 'numeric' },
         ]}
         data={list}
         actions={[
           {
-            icon: () => <Edit color='action' />,
+            icon: () => (
+              <span>
+                <Edit color='action' />
+              </span>
+            ),
             tooltip: 'Edit',
             onClick: (event, rowData) => handleEditArticle(rowData.id),
           },
           rowData => ({
-            icon: () => <Delete color='error' />,
+            icon: () => (
+              <span>
+                <Delete color='error' />
+              </span>
+            ),
             tooltip: 'Delete',
             onClick: (event, rowData) => handleDeletArticleConfirm(rowData.id, rowData.title),
           }),

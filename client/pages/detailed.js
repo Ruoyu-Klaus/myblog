@@ -53,7 +53,7 @@ function Detailed({ post }) {
                   <a href='/home'>首页</a>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                  <a href={`/list?id=${post.type_id}`}>{post.type_name}</a>
+                  <a href={`/list?id=${post.type_id}`}>{post?.type.type_name || null}</a>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{post.title}</Breadcrumb.Item>
               </Breadcrumb>
@@ -106,7 +106,7 @@ export async function getServerSideProps({ query }) {
     const requestUrl = base + API.servicePath.getArticleById;
     const res = await axios.get(requestUrl + id);
     const posts = await res.data;
-    const post = posts.data;
+    const post = posts.data[0];
     return {
       props: {
         post,

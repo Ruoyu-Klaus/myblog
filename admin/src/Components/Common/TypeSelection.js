@@ -41,7 +41,7 @@ function TypeSelection({ option, handleChange, types, placehoder }) {
         {types &&
           types.map(type => (
             <MenuItem key={type.id} value={type.id}>
-              {type.typeName}
+              {type.type_name}
             </MenuItem>
           ))}
       </Select>
@@ -50,6 +50,7 @@ function TypeSelection({ option, handleChange, types, placehoder }) {
 }
 
 TypeSelection.prototype = {
+  handleChange: PropTypes.func.isRequired,
   types: PropTypes.array.isRequired,
   placehoder: PropTypes.string,
 };

@@ -5,10 +5,10 @@ import Author from '../components/Author';
 import Project from '../components/Project';
 import Footer from '../components/Footer';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Row, Col, List, Breadcrumb } from 'antd';
-
+import { Row, Col, List, Breadcrumb, Pagination } from 'antd';
 import '../styles/Pages/list.less';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import marked from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/monokai-sublime.css';
@@ -31,15 +31,36 @@ function Mylist({ list, typeName }) {
       return hljs.highlightAuto(code).value;
     },
   });
-  const [mylist, setMylist] = useState(list.data);
+
+  const splitArr = (arr, step) => {
+    var res = [];
+    for (let i = 0, len = arr.length; i < len; i += step) {
+      res.push(arr.slice(i, i + step));
+    }
+    return res;
+  };
+  console.log(list, typeName);
+  const pageSize = 10;
+  const totalAtricles = list.data.length;
+
   useEffect(() => {
-    setMylist(list.data);
+    setMylist(splitArr(list.data, pageSize));
+    setCurrentList(splitArr(list.data, pageSize)[0]);
   }, [list]);
+
+  const [mylist, setMylist] = useState(splitArr(list.data, pageSize));
+  const [currentList, setCurrentList] = useState(mylist[0]);
+
+  const totalPage = Math.ceil(totalAtricles / 2);
+
+  const handlePageChange = page => {
+    setCurrentList(mylist[page - 1]);
+  };
 
   return (
     <div>
       <Head>
-        <title>{mylist[0].type_name} | Ruoyu </title>
+        <title>{typeName} | Ruoyu </title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header />
@@ -50,14 +71,15 @@ function Mylist({ list, typeName }) {
               <Breadcrumb.Item>
                 <a href='/home'>首页</a>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>{mylist[0].type_name}</Breadcrumb.Item>
+              <Breadcrumb.Item>{typeName}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
-          <div>
+          <>
             <List
               header={<div>最新日志</div>}
               itemLayout='vertical'
-              dataSource={mylist}
+              key={mylist}
+              dataSource={currentList}
               renderItem={item => (
                 <List.Item>
                   <div className='list-title'>
@@ -71,7 +93,7 @@ function Mylist({ list, typeName }) {
                       {item.add_time}
                     </span>
                     <span>
-                      <FontAwesomeIcon icon='folder' /> {item.type_name}
+                      <FontAwesomeIcon icon='folder' /> {typeName}
                     </span>
                     <span>
                       <FontAwesomeIcon icon='fire' />
@@ -85,7 +107,14 @@ function Mylist({ list, typeName }) {
                 </List.Item>
               )}
             />
-          </div>
+          </>
+          <Pagination
+            defaultCurrent={1}
+            defaultPageSize={pageSize}
+            onChange={handlePageChange}
+            total={totalAtricles}
+            style={{ textAlign: 'center' }}
+          />
         </Col>
         <Col className='comm-right' xs={0} sm={0} md={8} lg={6} xl={6}>
           <Author />

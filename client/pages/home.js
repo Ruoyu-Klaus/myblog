@@ -33,20 +33,34 @@ function Home({ posts }) {
     },
   });
 
-  const [mylist, setMylist] = useState(posts.data);
-  const [currentPage, setPage] = useState(1);
+  const splitArr = (arr, step) => {
+    var res = [];
+    for (let i = 0, len = arr.length; i < len; i += step) {
+      res.push(arr.slice(i, i + step));
+    }
+    return res;
+  };
+
+  const pageSize = 10;
+  const totalAtricles = posts.data.length;
 
   useEffect(() => {
-    setMylist(posts.data);
+    setMylist(splitArr(posts.data, pageSize));
   }, [posts]);
 
+  const [mylist, setMylist] = useState(splitArr(posts.data, pageSize));
+  const [cureentList, setCurrentList] = useState(mylist[0]);
+
+  const totalPage = Math.ceil(totalAtricles / 2);
+
   const handlePageChange = page => {
-    setPage(page);
+    setCurrentList(mylist[page - 1]);
   };
+
   return (
     <div>
       <Head>
-        <title>Home | Ruoyu</title>
+        <title>首页 | Ruoyu</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header />
@@ -56,7 +70,7 @@ function Home({ posts }) {
             <List
               header={<div>最新日志</div>}
               itemLayout='vertical'
-              dataSource={mylist}
+              dataSource={cureentList}
               renderItem={item => (
                 <List.Item>
                   <div className='list-title'>
@@ -70,7 +84,7 @@ function Home({ posts }) {
                       {dayjs(item.add_time).format('YYYY-MM-DD')}
                     </span>
                     <span>
-                      <FontAwesomeIcon icon='folder' /> {item.type_name}
+                      <FontAwesomeIcon icon='folder' /> {item.type.type_name || '未知'}
                     </span>
                     <span>
                       <FontAwesomeIcon icon='fire' />
@@ -86,9 +100,10 @@ function Home({ posts }) {
             />
           </>
           <Pagination
-            current={currentPage}
+            defaultCurrent={1}
+            defaultPageSize={pageSize}
             onChange={handlePageChange}
-            total={50}
+            total={totalAtricles}
             style={{ textAlign: 'center' }}
           />
         </Col>
@@ -110,6 +125,7 @@ export async function getStaticProps() {
   const requestUrl = base + API.servicePath.getArticleList;
   const res = await axios.get(requestUrl);
   const posts = await res.data;
+
   // By returning { props: posts }, the Blog component
   // will receive `posts` as a prop at build time
   return {

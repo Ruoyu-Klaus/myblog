@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as dayjs from 'dayjs';
 import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/dayjs';
 
@@ -17,7 +16,7 @@ function DatePicker({ selectedDate, handleChange }) {
   );
 }
 DatePicker.propTypes = {
-  selectedDate: PropTypes.object.isRequired,
+  selectedDate: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
 };
 

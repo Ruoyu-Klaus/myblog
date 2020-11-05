@@ -1,6 +1,6 @@
 import Axios from 'axios';
 
-Axios.defaults.baseURL = 'http://127.0.0.1:7001';
+Axios.defaults.baseURL = 'http://127.0.0.1:7002';
 Axios.defaults.timeout = 10000;
 Axios.defaults.withCredentials = true;
 

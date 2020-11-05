@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Router from 'next/router';
+import Link from 'next/link';
 
 import axios from 'axios';
 import { API } from '../config/default.json';
 
-import '../styles/Components/Header.less';
 import { Row, Col, Menu, Avatar } from 'antd';
+import '../styles/Components/Header.less';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Header() {
@@ -33,8 +35,12 @@ function Header() {
     <div className='header'>
       <Row type='flex' justify='center'>
         <Col xs={24} sm={24} md={14} lg={12}>
-          <Avatar className='header-logo' src='/logo192.png' shape='square' size='large'></Avatar>
-          <span className='header-text'>克劳斯</span>
+          <Link href={{ pathname: '/' }}>
+            <Avatar className='header-logo' src='/logo192.png' shape='square' size='large' />
+          </Link>
+          <Link href={{ pathname: '/' }}>
+            <span className='header-text'>克劳斯</span>
+          </Link>
         </Col>
         <Col xs={0} sm={0} md={10} lg={8} xl={6}>
           <Menu mode='horizontal' onClick={handleClick}>

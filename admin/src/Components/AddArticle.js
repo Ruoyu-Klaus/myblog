@@ -19,13 +19,17 @@ function AddArticle({ history, match }) {
   const [typeInfo, setTypeInfo] = useState([]);
   // Alert
   const [openAlert, setOpenAlert] = useState({ open: false, message: '', type: 'error' });
+
   useEffect(() => {
     getTypeInfo();
+  }, []);
 
+  useEffect(() => {
     // 获取文章ID
     let id = match.params.id;
-    id && setArticleId(id) && getArticleById(id);
-  }, []);
+    id && setArticleId(id);
+    id && getArticleById(id);
+  }, [match.params.id]);
 
   const [articleTitle, setArticleTitle] = useState('');
 
@@ -60,19 +64,20 @@ function AddArticle({ history, match }) {
   };
 
   // 处理日期
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD HH:mm:ss'));
   const handleDateChange = date => {
     setSelectedDate(date);
   };
 
   // 暂存文章
   const cacheArticle = () => {
-    let dataProps = new Object();
+    let dataProps = {};
     dataProps.type_id = selectedType;
     dataProps.title = articleTitle;
     dataProps.article_content = articleContent;
     dataProps.introduce = introContent;
-    dataProps.addTime = dayjs(selectedDate).unix();
+    dataProps.add_time = dayjs(selectedDate).format('YYYY-MM-DD HH:mm:ss');
+    console.log(dataProps);
   };
   // 清空文章
   const clearArticle = () => {
@@ -100,12 +105,12 @@ function AddArticle({ history, match }) {
       setOpenAlert(state => ({ ...state, open: true, message: '发布日期不能为空' }));
       return false;
     }
-    let dataProps = new Object();
+    let dataProps = {};
     dataProps.type_id = selectedType;
     dataProps.title = articleTitle;
     dataProps.article_content = articleContent;
     dataProps.introduce = introContent;
-    dataProps.addTime = dayjs(selectedDate).unix();
+    dataProps.add_time = dayjs(selectedDate).format('YYYY-MM-DD HH:mm:ss');
 
     setOpenAlert(state => ({ ...state, open: true, message: '检验通过' }));
     if (articleId === 0) {
@@ -174,17 +179,19 @@ function AddArticle({ history, match }) {
 
   const getArticleById = async id => {
     let reqUrl = API.servicePath.getArticleById + id;
+    console.log(reqUrl);
     let res = await Axios({
       method: 'get',
       url: reqUrl,
       withCredentials: true,
     });
+
     let articleInfo = res.data[0];
     setArticleTitle(() => articleInfo.title);
     setIntroContent(() => articleInfo.introduce);
     setArticleContent(() => articleInfo.article_content);
     setSelectedType(() => articleInfo.type_id);
-    setSelectedDate(() => articleInfo.addTime);
+    setSelectedDate(() => articleInfo.add_time);
   };
 
   return (

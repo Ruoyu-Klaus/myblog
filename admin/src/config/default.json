@@ -1,5 +1,6 @@
 {
   "API": {
+    "baseUrl": "http://127.0.0.1:7002",
     "servicePath": {
       "getCheckLogin": "/admin/checkLogin/",
       "getTypeInfo": "/admin/getTypeInfo/",

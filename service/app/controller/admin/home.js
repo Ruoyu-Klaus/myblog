@@ -32,16 +32,23 @@ class HomeController extends Controller {
   //后台文章分类信息 GET
   async getTypeInfo() {
     const { ctx } = this;
-    const resType = await this.app.mysql.select('type');
-    ctx.body = { data: resType };
+    const results = await ctx.model.Type.findAll();
+    // const results = await this.app.mysql.select('type');
+    ctx.body = { data: results };
   }
   //后台添加文章 POST
   async addArticle() {
     const { ctx } = this;
     let reqArticle = ctx.request.body;
-    const result = await this.app.mysql.insert('article', reqArticle);
-    const isSuccess = result.affectedRows === 1;
-    const insertId = result.insertId;
+
+    const result = await ctx.model.ArticleList.create(reqArticle);
+
+    // const result = await this.app.mysql.insert('article', reqArticle);
+    // const isSuccess = result.affectedRows === 1;
+    // const insertId = result.insertId;
+
+    const isSuccess = !isNaN(Number(result.id));
+    const insertId = result.id;
     ctx.body = {
       isSuccess,
       insertId,
@@ -51,8 +58,11 @@ class HomeController extends Controller {
   async updateArticle() {
     const { ctx } = this;
     let reqArticle = ctx.request.body;
-    const result = await this.app.mysql.update('article', reqArticle);
-    const isSuccess = result.affectedRows === 1;
+
+    const result = await ctx.model.ArticleList.update(reqArticle, { where: { id: reqArticle.id } });
+    // const result = await this.app.mysql.update('article', reqArticle);
+    const isSuccess = !isNaN(Number(result.id));
+
     ctx.body = {
       isSuccess,
     };
@@ -84,7 +94,8 @@ class HomeController extends Controller {
   async deleteArticleById() {
     const { ctx } = this;
     let id = ctx.params.id;
-    const res = await this.app.mysql.delete('article', { id });
+    const res = await ctx.model.ArticleList.destroy({ where: { id } });
+    // const res = await this.app.mysql.delete('article', { id });
     ctx.body = {
       data: res,
     };

@@ -11,6 +11,7 @@ import Alerts from './Common/Alerts';
 import { API } from '../config/default.json';
 import * as dayjs from 'dayjs';
 import Axios from '../utils/axios';
+import getCookie from '../utils/getCookie';
 
 function AddArticle({ history, match }) {
   // 文章ID 0新增加，不是0修改
@@ -123,15 +124,28 @@ function AddArticle({ history, match }) {
             method: 'post',
             url: reqUrl,
             data: dataProps,
+            headers: {
+              'x-csrf-token': getCookie('csrfToken'),
+            },
             withCredentials: true,
           });
-          setOpenAlert(state => ({
-            ...state,
-            open: true,
-            type: res.isSuccess ? 'success' : 'error',
-            message: res.isSuccess ? '上传成功' : '上传失败',
-          }));
-          res.isSuccess && setArticleId(() => res.insertId);
+          if (Object.keys(res).length !== 0) {
+            console.log(res);
+            setOpenAlert(state => ({
+              ...state,
+              open: true,
+              type: res.isSuccess ? 'success' : 'error',
+              message: res.isSuccess ? '上传成功' : '上传失败',
+            }));
+            res.isSuccess && setArticleId(() => res.insertId);
+          } else {
+            setOpenAlert(state => ({
+              ...state,
+              open: true,
+              type: 'error',
+              message: '上传失败',
+            }));
+          }
         } catch (error) {
           setOpenAlert(state => ({
             ...state,
@@ -152,15 +166,27 @@ function AddArticle({ history, match }) {
             method: 'post',
             url: reqUrl,
             data: dataProps,
+            headers: {
+              'x-csrf-token': getCookie('csrfToken'),
+            },
             withCredentials: true,
           });
-          setOpenAlert(state => ({
-            ...state,
-            open: true,
-            type: res.isSuccess ? 'success' : 'error',
-            message: res.isSuccess ? '更新成功' : '更新失败',
-          }));
-          res.isSuccess && setArticleId(res.insertId);
+          if (Object.keys(res).length !== 0) {
+            setOpenAlert(state => ({
+              ...state,
+              open: true,
+              type: res.isSuccess ? 'success' : 'error',
+              message: res.isSuccess ? '更新成功' : '上传失败',
+            }));
+            res.isSuccess && setArticleId(() => res.insertId);
+          } else {
+            setOpenAlert(state => ({
+              ...state,
+              open: true,
+              type: 'error',
+              message: '更新失败',
+            }));
+          }
         } catch (error) {
           setOpenAlert(state => ({
             ...state,
@@ -179,19 +205,22 @@ function AddArticle({ history, match }) {
 
   const getArticleById = async id => {
     let reqUrl = API.servicePath.getArticleById + id;
-    console.log(reqUrl);
     let res = await Axios({
       method: 'get',
       url: reqUrl,
+      headers: {
+        'x-csrf-token': getCookie('csrfToken'),
+      },
       withCredentials: true,
     });
-
-    let articleInfo = res.data[0];
-    setArticleTitle(() => articleInfo.title);
-    setIntroContent(() => articleInfo.introduce);
-    setArticleContent(() => articleInfo.article_content);
-    setSelectedType(() => articleInfo.type_id);
-    setSelectedDate(() => articleInfo.add_time);
+    if (Object.keys(res).length !== 0) {
+      let articleInfo = res.data[0];
+      setArticleTitle(() => articleInfo.title);
+      setIntroContent(() => articleInfo.introduce);
+      setArticleContent(() => articleInfo.article_content);
+      setSelectedType(() => articleInfo.type_id);
+      setSelectedDate(() => articleInfo.add_time);
+    }
   };
 
   return (

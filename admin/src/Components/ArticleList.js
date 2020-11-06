@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 // import {} from '@material-ui/core';
 import MaterialTable from 'material-table';
 import {
@@ -14,12 +15,14 @@ import {
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { API } from '../config/default.json';
-import * as dayjs from 'dayjs';
-import Axios from '../utils/axios';
 import AlertDialog from './Common/AlertDialog';
 import Alerts from './Common/Alerts';
-import { useHistory } from 'react-router-dom';
+
+import { API } from '../config/default.json';
+import * as dayjs from 'dayjs';
+
+import Axios from '../utils/axios';
+import getCookie from '../utils/getCookie';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,9 +61,11 @@ function ArticleList() {
     let res = await Axios({
       method: 'get',
       url: reqUrl,
+      headers: {
+        'x-csrf-token': getCookie('csrfToken'),
+      },
       withCredentials: true,
     });
-    console.log(res);
     setList(() => res.data);
   };
   const handleCloseConfrim = () => {
@@ -79,6 +84,9 @@ function ArticleList() {
       await Axios({
         method: 'delete',
         url: reqUrl,
+        headers: {
+          'x-csrf-token': getCookie('csrfToken'),
+        },
         withCredentials: true,
       });
       setOpenConfrim(false);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch, useLocation, Link as RouteLink } from 'react-router-dom';
 import Copyright from '../Components/Common/Copyright';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Breadcrumbs, Link, Container, Box } from '@material-ui/core';
@@ -32,10 +32,16 @@ const useStyles = makeStyles(theme => ({
 function Main() {
   const classes = useStyles();
 
-  function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
-  }
+  let loc = useLocation();
+  let pathnames = loc.pathname.split('/').filter(w => w);
+
+  let routes = [
+    { path: 'index', name: '首页' },
+    { path: 'addarticle', name: '新增文章' },
+    { path: 'list', name: '文章列表' },
+    { name: '修改文章' },
+  ];
+
   return (
     <Paper
       elevation={0}
@@ -54,18 +60,30 @@ function Main() {
           separator={<NavigateNextIcon fontSize='small' />}
           aria-label='breadcrumb'
         >
-          <Link color='inherit' href='/' onClick={handleClick}>
-            Material-UI
-          </Link>
-          <Link color='inherit' href='/getting-started/installation/' onClick={handleClick}>
-            Core
-          </Link>
-          <Typography color='textPrimary'>Breadcrumb</Typography>
+          {pathnames.map((value, index) => {
+            const last = index === pathnames.length - 1;
+            const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+            const breadcrumbRoute = routes.filter(
+              ({ path, name }) => path === value || !isNaN(Number(value))
+            );
+            return last ? (
+              <Typography color='textPrimary' key={to}>
+                {breadcrumbRoute.length === 1 ? breadcrumbRoute[0].name : value}
+              </Typography>
+            ) : (
+              <Link color='inherit' component={RouteLink} to={to} key={to}>
+                {breadcrumbRoute.length === 1 ? breadcrumbRoute[0].name : value}
+              </Link>
+            );
+          })}
         </Breadcrumbs>
         <div className={classes.content}>
-          <Route exact path='/index/addarticle' component={AddArticle} />
-          <Route exact path='/index/addarticle/:id' component={AddArticle} />
-          <Route exact path='/index/list' component={ArticleList} />
+          <Switch>
+            <Route exact path='/index' />
+            <Route exact path='/index/addarticle' component={AddArticle} />
+            <Route exact path='/index/addarticle/:id' component={AddArticle} />
+            <Route exact path='/index/list' component={ArticleList} />
+          </Switch>
         </div>
       </main>
       <Container component='footer' style={{ marginTop: 'auto' }}>

@@ -1,6 +1,7 @@
 import Axios from 'axios';
+import { API } from '../config/default.json';
 
-Axios.defaults.baseURL = 'http://127.0.0.1:7002';
+Axios.defaults.baseURL = API.baseUrl;
 Axios.defaults.timeout = 10000;
 Axios.defaults.withCredentials = true;
 

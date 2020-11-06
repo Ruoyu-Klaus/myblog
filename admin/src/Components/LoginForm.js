@@ -17,6 +17,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import { API } from '../config/default.json';
 import Axios from '../utils/axios';
+import getCookie from '../utils/getCookie';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -64,11 +65,17 @@ function LoginForm() {
         method: 'post',
         url: reqUrl,
         data: dataProps,
+        headers: {
+          'x-csrf-token': getCookie('csrfToken'),
+        },
         withCredentials: true,
       });
-      console.log(res);
+      if (!res) {
+        setOpenAlert(state => ({ ...state, open: true, message: '服务器出错' }));
+        return;
+      }
       if (res.data === '登录成功') {
-        localStorage.setItem('openId', res.data.openId);
+        localStorage.setItem('openId', res.openId);
         history.push('/index');
       } else {
         setOpenAlert(state => ({ ...state, open: true, message: '用户名密码错误' }));
@@ -133,18 +140,6 @@ function LoginForm() {
         >
           Sign In
         </Button>
-        <Grid container>
-          <Grid item xs>
-            <Link href='#' variant='body2'>
-              Forgot password?
-            </Link>
-          </Grid>
-          <Grid item>
-            <Link href='#' variant='body2'>
-              {"Don't have an account? Sign Up"}
-            </Link>
-          </Grid>
-        </Grid>
         <Box mt={5}>
           <Copyright />
         </Box>

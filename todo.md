@@ -14,3 +14,4 @@
 - 抽象分页代码【list 和 homelist】
 - 管理平台 CRUD 的 sequelize 严谨度需要加强， 需要返回成功状态码
 - cros csrf 问题
+- 替换并移除@egg-mysql

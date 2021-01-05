@@ -58,7 +58,7 @@ module.exports = appInfo => {
 
   config.security = {
     csrf: { enable: true, headerName: 'x-csrf-token' },
-    domainWhiteList: ['http://127.0.0.1:3000', 'http://127.0.0.1:8000'],
+    domainWhiteList: [ 'http://127.0.0.1:3000', 'http://127.0.0.1:8000' ],
   };
   config.cors = {
     enable: 'true',

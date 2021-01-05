@@ -1,4 +1,5 @@
 // app/model/articleList.js
+'use strict';
 
 module.exports = app => {
   // egg-sequelize插件会将Sequelize类绑定到app上线，从里面可以取到各种静态类型

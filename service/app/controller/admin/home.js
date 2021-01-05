@@ -11,13 +11,13 @@ class HomeController extends Controller {
   async checkLogin() {
     const { ctx } = this;
     try {
-      let userName = ctx.request.body.userName;
-      let password = ctx.request.body.password;
+      const userName = ctx.request.body.userName;
+      const password = ctx.request.body.password;
       const sql = `SELECT uname FROM user WHERE uname = '${userName}' AND upassword = '${password}'`;
       const res = await this.app.mysql.query(sql);
       if (res.length > 0) {
-        //登录成功,进行session缓存
-        let openId = new Date().getTime();
+        // 登录成功,进行session缓存
+        const openId = new Date().getTime();
         ctx.session.openId = { openId };
         ctx.body = { data: '登录成功', openId };
       } else {
@@ -29,17 +29,17 @@ class HomeController extends Controller {
       ctx.body = { data: '登陆失败' };
     }
   }
-  //后台文章分类信息 GET
+  // 后台文章分类信息 GET
   async getTypeInfo() {
     const { ctx } = this;
     const results = await ctx.model.Type.findAll();
     // const results = await this.app.mysql.select('type');
     ctx.body = { data: results };
   }
-  //后台添加文章 POST
+  // 后台添加文章 POST
   async addArticle() {
     const { ctx } = this;
-    let reqArticle = ctx.request.body;
+    const reqArticle = ctx.request.body;
 
     const result = await ctx.model.ArticleList.create(reqArticle);
 
@@ -54,10 +54,10 @@ class HomeController extends Controller {
       insertId,
     };
   }
-  //后台修改文章 POST
+  // 后台修改文章 POST
   async updateArticle() {
     const { ctx } = this;
-    let reqArticle = ctx.request.body;
+    const reqArticle = ctx.request.body;
 
     const result = await ctx.model.ArticleList.update(reqArticle, { where: { id: reqArticle.id } });
     // const result = await this.app.mysql.update('article', reqArticle);
@@ -67,7 +67,7 @@ class HomeController extends Controller {
       isSuccess,
     };
   }
-  //后台获取文章 GET
+  // 后台获取文章 GET
   async getArticleList() {
     const { ctx } = this;
     // let sql =
@@ -82,7 +82,7 @@ class HomeController extends Controller {
     // const results = await this.app.mysql.query(sql);
 
     const results = await ctx.model.ArticleList.findAll({
-      order: [['add_time', 'DESC']],
+      order: [[ 'add_time', 'DESC' ]],
       include: [{ model: ctx.model.Type, as: 'type' }],
     });
     ctx.body = {
@@ -90,10 +90,10 @@ class HomeController extends Controller {
     };
   }
 
-  //后台通过ID删除文章 DELETE
+  // 后台通过ID删除文章 DELETE
   async deleteArticleById() {
     const { ctx } = this;
-    let id = ctx.params.id;
+    const id = ctx.params.id;
     const res = await ctx.model.ArticleList.destroy({ where: { id } });
     // const res = await this.app.mysql.delete('article', { id });
     ctx.body = {
@@ -101,10 +101,10 @@ class HomeController extends Controller {
     };
   }
 
-  //后台通过ID得到文章 GET
+  // 后台通过ID得到文章 GET
   async getArticleById() {
     const { ctx } = this;
-    let id = ctx.params.id;
+    const id = ctx.params.id;
     // let sql =
     //   'SELECT article.id as id,' +
     //   'article.title as title,' +
@@ -120,7 +120,7 @@ class HomeController extends Controller {
     // const result = await this.app.mysql.query(sql);
 
     const result = await ctx.model.ArticleList.findAll({
-      where: { id: id },
+      where: { id },
       include: [{ model: ctx.model.Type, as: 'type' }],
     });
 

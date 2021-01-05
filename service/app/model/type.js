@@ -1,8 +1,9 @@
 // app/model/type.js
+'use strict';
 
 module.exports = app => {
   // egg-sequelize插件会将Sequelize类绑定到app上线，从里面可以取到各种静态类型
-  const { TEXT, INTEGER, NOW, STRING } = app.Sequelize;
+  const { INTEGER, STRING } = app.Sequelize;
 
   const Type = app.model.define(
     'type',
